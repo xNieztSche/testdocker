@@ -1,0 +1,23 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  KUBECONFIG: "/root/.kube/config"  # Ruta donde se almacena el archivo de configuración de Kubernetes
+
+before_script:
+  # Instala kubectl en el runner de GitLab CI
+  - apk add --no-cache kubectl 
+
+build_job:
+  stage: build
+  script:
+    - echo "Construyendo la imagen Docker..."
+    - docker build -t my-app:latest .
+
+deploy_job:
+  stage: deploy
+  script:
+    - echo "Desplegando en Kubernetes..."
+    - kubectl config set-context --current --namespace=ci-cd-demo
+    - kubectl apply -f deployment.yaml
