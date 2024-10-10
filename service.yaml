@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sinatra-app-service
-  namespace: ci-cd-demo  # Asegúrate de que el namespace esté definido correctamente
+  namespace: ci-cd-demo
 spec:
   selector:
-    app: sinatra-app  # Debe coincidir con la etiqueta de los pods en el deployment.yaml
+    app: sinatra-app
   ports:
     - protocol: TCP
-      port: 80         # El puerto externo para acceder al servicio
-      targetPort: 4567  # El puerto interno del contenedor donde la aplicación Sinatra está escuchando
+      port: 80          # El puerto externo para acceder al servicio
+      targetPort: 4568  # Cambia a 4568
   type: NodePort  # Usamos NodePort para exponer el servicio fuera del clúster
