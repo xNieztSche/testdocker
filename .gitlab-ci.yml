@@ -1,23 +1,28 @@
+image: ruby:3.1-alpine
+
 stages:
   - build
   - deploy
 
-variables:
-  KUBECONFIG: "/root/.kube/config"  # Ruta donde se almacena el archivo de configuración de Kubernetes
-
 before_script:
-  # Instala kubectl en el runner de GitLab CI
-  - apk add --no-cache kubectl 
+  # Instalamos kubectl en la imagen Alpine
+  - apk update && apk add --no-cache curl bash
+  - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  - chmod +x kubectl
+  - mv kubectl /usr/local/bin/kubectl
+  - kubectl version --client
 
-build_job:
+build:
   stage: build
   script:
-    - echo "Construyendo la imagen Docker..."
-    - docker build -t my-app:latest .
+    - echo "Building the application"
+    - bundle install  # Instalar dependencias Ruby
+    - echo "Build completed"
 
-deploy_job:
+deploy:
   stage: deploy
   script:
-    - echo "Desplegando en Kubernetes..."
-    - kubectl config set-context --current --namespace=ci-cd-demo
-    - kubectl apply -f deployment.yaml
+    - echo "Deploying to Kubernetes"
+    - kubectl apply -f deployment.yaml --namespace=ci-cd-demo  # Aplica el despliegue en Kubernetes
+  only:
+    - main

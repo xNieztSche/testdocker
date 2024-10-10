@@ -1,20 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: sinatra-app
+  namespace: ci-cd-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-app
+      app: sinatra-app
   template:
     metadata:
       labels:
-        app: my-app
+        app: sinatra-app
     spec:
       containers:
-      - name: my-app
-        image: my-app:latest
-        ports:
-        - containerPort: 80
- 
+        - name: sinatra-container
+          image: ruby:3.1-alpine
+          command: ["ruby", "app.rb"]
+          ports:
+            - containerPort: 4567
