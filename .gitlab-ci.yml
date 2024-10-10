@@ -20,4 +20,4 @@ deploy_job:
   script:
     - echo "Desplegando en Kubernetes..."
     - kubectl config set-context --current --namespace=ci-cd-demo
-    - kubectl apply -f deployment.yaml
+    - kubectl apply -f deployment.
