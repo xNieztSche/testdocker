@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+  namespace: ci-cd-demo  # Este es el namespace en el que estamos trabajando
+spec:
+  selector:
+    app: my-app  # Esta etiqueta debe coincidir con las etiquetas definidas en tu Deployment
+  ports:
+    - protocol: TCP
+      port: 80        # El puerto externo
+      targetPort: 8080  # El puerto que está escuchando tu aplicación dentro del contenedor
+  type: NodePort  # Usamos NodePort para exponerlo fuera del clúster en Minikube
