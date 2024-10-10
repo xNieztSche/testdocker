@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
-  namespace: ci-cd-demo  # Este es el namespace en el que estamos trabajando
+  name: sinatra-app-service
+  namespace: ci-cd-demo  # Asegúrate de que el namespace esté definido correctamente
 spec:
   selector:
-    app: my-app  # Esta etiqueta debe coincidir con las etiquetas definidas en tu Deployment
+    app: sinatra-app  # Debe coincidir con la etiqueta de los pods en el deployment.yaml
   ports:
     - protocol: TCP
-      port: 80        # El puerto externo
-      targetPort: 8080  # El puerto que está escuchando tu aplicación dentro del contenedor
-  type: NodePort  # Usamos NodePort para exponerlo fuera del clúster en Minikube
+      port: 80         # El puerto externo para acceder al servicio
+      targetPort: 4567  # El puerto interno del contenedor donde la aplicación Sinatra está escuchando
+  type: NodePort  # Usamos NodePort para exponer el servicio fuera del clúster
