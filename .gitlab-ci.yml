@@ -5,26 +5,20 @@ stages:
   - deploy
 
 before_script:
-  # Instalamos kubectl y las herramientas necesarias en Alpine Linux
-  - apk update && apk add --no-cache curl bash build-base
-  - apk add --no-cache ruby-dev # Dependencias adicionales necesarias para instalar gemas nativas
-  - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-  - chmod +x kubectl
-  - mv kubectl /usr/local/bin/kubectl
-  - kubectl version --client  # Verificamos que kubectl está instalado correctamente
+  - apk update && apk add --no-cache curl bash build-base ruby-dev
+  - gem install bundler
 
 build:
   stage: build
   script:
-    - echo "Building the application"
-    - gem install bundler  # Instalar bundler
-    - bundle install  # Instalar las dependencias del Gemfile
-    - echo "Build completed"
+    - bundle install
+    - ruby app.rb &  # Ejecutar la aplicación en segundo plano
+    - sleep 10
+    - curl http://localhost:4567 || exit 1  # Verifica que la aplicación responde
 
 deploy:
   stage: deploy
   script:
-    - echo "Deploying to Kubernetes"
-    - kubectl apply -f deployment.yaml --namespace=ci-cd-demo  # Aplica el despliegue en Kubernetes
+    - kubectl apply -f deployment.yaml --namespace=ci-cd-demo
   only:
     - main
