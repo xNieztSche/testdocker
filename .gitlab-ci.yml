@@ -1,24 +1,30 @@
-image: ruby:3.1-alpine
+image: ruby:3.1-alpine  # Cambiar a una imagen basada en Alpine
 
 stages:
   - build
   - deploy
 
 before_script:
+  # Instalamos kubectl en la imagen Alpine
   - apk update && apk add --no-cache curl bash build-base ruby-dev
-  - gem install bundler
+  - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  - chmod +x kubectl
+  - mv kubectl /usr/local/bin/kubectl
+  - kubectl version --client
 
 build:
   stage: build
   script:
-    - bundle install
-    - ruby app.rb &  # Ejecutar la aplicación en segundo plano
+    - echo "Building the application"
+    - bundle install  # Instalar dependencias Ruby
+    - ruby app.rb &   # Ejecutar la aplicación en segundo plano
     - sleep 10
-    - curl http://localhost:4567 || exit 1  # Verifica que la aplicación responde
+    - curl http://localhost:4567 || exit 1  # Verificar que la aplicación responde
 
 deploy:
   stage: deploy
   script:
-    - kubectl apply -f deployment.yaml --namespace=ci-cd-demo
+    - echo "Deploying to Kubernetes"
+    - kubectl apply -f deployment.yaml --namespace=ci-cd-demo  # Aplica el despliegue en Kubernetes
   only:
     - main
