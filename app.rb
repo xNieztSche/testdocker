@@ -2,5 +2,5 @@
 require 'sinatra'
 
 get '/' do
-  "Hola !"
+  "Hola  Como estas!"
 end
